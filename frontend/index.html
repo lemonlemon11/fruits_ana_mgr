@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="Fruits ANA 项目观察台视觉原型，只读观察 fruits_ana 与 fruits_ana_admin。"
+    />
+    <title>Fruits ANA · 项目观察台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <section class="auth-gate" id="auth-gate" aria-labelledby="login-title" hidden>
+      <form class="auth-card" id="login-form">
+        <span class="read-only-chip">READ ONLY · PROJECT MANAGER</span>
+        <p class="eyebrow">FRUITS ANA / INTERNAL</p>
+        <h1 id="login-title">项目观察台</h1>
+        <p>登录后读取两个项目的 Git 与项目文档。观察台不会修改源项目。</p>
+        <label for="login-username">账号</label>
+        <input id="login-username" name="username" autocomplete="username" value="admin" required />
+        <label for="login-password">密码</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+        <button class="refresh-button auth-submit" type="submit"><span>登录并读取</span></button>
+        <p class="auth-hint" id="login-message" role="alert"></p>
+        <small>演示默认账号：admin / 12345678。部署时请通过环境变量更换。</small>
+      </form>
+    </section>
+
+    <div class="app-shell" id="app-shell" hidden>
+      <aside class="sidebar" aria-label="主要导航">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">FM</div>
+          <div>
+            <p class="eyebrow">Fruits Monitor</p>
+            <strong>项目观察台</strong>
+          </div>
+        </div>
+
+        <div class="observer-stamp">
+          <span class="status-dot" id="source-status-dot" aria-hidden="true"></span>
+          <div>
+            <strong id="source-status-label">只读观察</strong>
+            <small id="source-status-detail">正在读取两个源项目…</small>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item is-active" type="button" data-view="overview">
+            <span>01</span><strong>观察总览</strong>
+          </button>
+          <button class="nav-item" type="button" data-view="active">
+            <span>02</span><strong>正在进行</strong><b id="nav-active-count">—</b>
+          </button>
+          <button class="nav-item" type="button" data-view="backlog">
+            <span>03</span><strong>后续待办</strong><b id="nav-backlog-count">—</b>
+          </button>
+          <button class="nav-item" type="button" data-view="completed">
+            <span>04</span><strong>完成轨迹</strong>
+          </button>
+          <button class="nav-item" type="button" data-view="decisions">
+            <span>05</span><strong>决策档案</strong><b id="nav-decisions-count">—</b>
+          </button>
+          <button class="nav-item" type="button" data-view="quality">
+            <span>06</span><strong>质量证据</strong><i></i>
+          </button>
+          <button class="nav-item" type="button" data-view="meeting">
+            <span>07</span><strong>观察会议</strong>
+          </button>
+        </nav>
+
+        <div class="source-stack" aria-label="观察源状态">
+          <p class="eyebrow">OBSERVATION SOURCES</p>
+          <div><span class="source-icon">U</span><p><strong>fruits_ana</strong><small id="source-user-detail">读取中…</small></p></div>
+          <div><span class="source-icon">A</span><p><strong>fruits_ana_admin</strong><small id="source-admin-detail">读取中…</small></p></div>
+        </div>
+      </aside>
+
+      <main id="main-content" class="workspace" tabindex="-1">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="view-kicker">PROJECT PULSE / OVERVIEW</p>
+            <h1 id="view-title">今天，先看这三件事</h1>
+          </div>
+          <div class="topbar-actions">
+            <div class="freshness">
+              <span>最近观察</span>
+            <strong id="last-scan">读取中…</strong>
+            </div>
+            <button class="refresh-button" id="refresh-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 7v5h-5M4 17v-5h5M6.1 8.4a7 7 0 0 1 11.6-2.6L20 8M4 16l2.3 2.2a7 7 0 0 0 11.6-2.6" />
+              </svg>
+              <span>重新观察</span>
+            </button>
+            <button class="profile-button" id="logout-button" type="button" aria-label="退出项目经理账号">退出</button>
+          </div>
+        </header>
+
+        <section class="view-panel is-active" data-panel="overview">
+          <div class="signal-strip" aria-label="今日重要观察">
+            <article class="signal-card signal-critical">
+              <div class="signal-index">01</div>
+              <div>
+                <p class="eyebrow">需要收口</p>
+                <h2 id="signal-work-title">正在读取仓库工作区状态</h2>
+                <p id="signal-work-detail">工作区与提交状态来自实时 Git 只读扫描。</p>
+              </div>
+              <span class="signal-tag">风险</span>
+            </article>
+            <article class="signal-card">
+              <div class="signal-index">02</div>
+              <div>
+                <p class="eyebrow">两端联动</p>
+                <h2 id="signal-source-title">数据源覆盖</h2>
+                <p id="signal-source-detail">等待读取两个仓库的可用文档清单。</p>
+              </div>
+              <span class="signal-tag is-blue">联调</span>
+            </article>
+            <article class="signal-card">
+              <div class="signal-index">03</div>
+              <div>
+                <p class="eyebrow">待项目经理决定</p>
+                <h2 id="signal-next-title">当前待办</h2>
+                <p id="signal-next-detail">待读取源项目 TODO 与 HANDOFF。</p>
+              </div>
+              <span class="signal-tag is-amber">决策</span>
+            </article>
+          </div>
+
+          <section class="section-block source-coverage-section">
+            <div class="section-heading"><div><p class="eyebrow">SOURCE COVERAGE</p><h2>哪些数据读到了，哪些来源缺失</h2></div><span class="read-only-chip" id="coverage-total">读取中…</span></div>
+            <div class="coverage-grid" id="coverage-grid" aria-live="polite"></div>
+          </section>
+
+          <div class="summary-grid">
+            <article class="summary-card">
+              <p>正在进行</p><strong id="summary-active">—</strong><span id="summary-active-detail">等待源项目状态</span>
+            </article>
+            <article class="summary-card">
+              <p>后续待办</p><strong id="summary-backlog">—</strong><span id="summary-backlog-detail">等待 TODO.md</span>
+            </article>
+            <article class="summary-card">
+              <p>需要确认</p><strong id="summary-questions">—</strong><span id="summary-questions-detail">等待 HANDOFF.md</span>
+            </article>
+            <article class="summary-card summary-health">
+              <p>最近质量状态</p><strong id="summary-quality">—</strong><span id="summary-quality-detail">等待测试记录</span>
+            </article>
+          </div>
+
+          <div class="overview-layout">
+            <div class="overview-primary">
+              <section class="section-block">
+                <div class="section-heading">
+                  <div><p class="eyebrow">LIVE WORK</p><h2>两个项目正在推进什么</h2></div>
+                  <button class="text-action" type="button" data-go-view="active">展开全部</button>
+                </div>
+
+                <div class="project-pair">
+                  <article class="project-card project-user">
+                    <header>
+                      <div><span class="project-code">U</span><p><strong id="user-project-name">fruits_ana</strong><small id="user-project-branch">读取中…</small></p></div>
+                      <span class="project-state is-risk" id="user-project-state">读取中…</span>
+                    </header>
+                    <div class="project-focus">
+                      <p>当前焦点</p>
+                      <h3 id="user-project-focus">读取 HANDOFF.md 当前目标…</h3>
+                    </div>
+                    <ul class="task-lines">
+                      <li><span class="task-status is-working"></span><p><strong>登录后首屏性能优化</strong><small>代码与验证记录已存在，尚未提交</small></p><b>进行中</b></li>
+                      <li><span class="task-status is-working"></span><p><strong>异步操作等待反馈</strong><small>导出、排序、录单与复核状态统一</small></p><b>进行中</b></li>
+                      <li><span class="task-status is-review"></span><p><strong>默认错误页</strong><small>定向验证完成，等待合并收口</small></p><b>待收口</b></li>
+                    </ul>
+                    <footer><span id="user-project-files">读取工作区状态…</span><strong id="user-project-commit">读取最近提交…</strong></footer>
+                  </article>
+
+                  <div class="dependency-rail" aria-label="项目联动关系">
+                    <span></span><b>菜单 / 权限 / 字段规则</b><span></span>
+                  </div>
+
+                  <article class="project-card project-admin">
+                    <header>
+                      <div><span class="project-code">A</span><p><strong id="admin-project-name">fruits_ana_admin</strong><small id="admin-project-branch">读取中…</small></p></div>
+                      <span class="project-state is-stable" id="admin-project-state">读取中…</span>
+                    </header>
+                    <div class="project-focus">
+                      <p>当前焦点</p>
+                      <h3 id="admin-project-focus">读取最近提交…</h3>
+                    </div>
+                    <ul class="task-lines">
+                      <li><span class="task-status is-done"></span><p><strong>调整默认菜单授权</strong><small>提交 ce7582e · 今天</small></p><b>已提交</b></li>
+                      <li><span class="task-status is-review"></span><p><strong>双端角色入口复核</strong><small>需与用户端欢迎页行为一起验收</small></p><b>待联调</b></li>
+                      <li><span class="task-status is-muted"></span><p><strong>工作区清洁</strong><small>发现备份文件与图片目录未跟踪</small></p><b>观察项</b></li>
+                    </ul>
+                    <footer><span id="admin-project-files">读取工作区状态…</span><strong id="admin-project-commit">读取最近提交…</strong></footer>
+                  </article>
+                </div>
+              </section>
+
+              <section class="section-block evidence-section">
+                <div class="section-heading">
+                  <div><p class="eyebrow">EVIDENCE TRAIL</p><h2>进度不是口头状态，而是证据链</h2></div>
+                  <span class="read-only-chip">只读快照</span>
+                </div>
+                <div class="evidence-flow">
+                  <div><span>01</span><strong>计划</strong><small id="evidence-todo">TODO · 读取中…</small></div>
+                  <i></i>
+                  <div><span>02</span><strong>在途</strong><small id="evidence-handoff">HANDOFF · 读取中…</small></div>
+                  <i></i>
+                  <div><span>03</span><strong>实现</strong><small id="evidence-git">Git · 读取中…</small></div>
+                  <i></i>
+                  <div><span>04</span><strong>验证</strong><small id="evidence-tests">Tests · 读取中…</small></div>
+                  <i></i>
+                  <div><span>05</span><strong>决策</strong><small id="evidence-decisions">ADR · 读取中…</small></div>
+                </div>
+              </section>
+            </div>
+
+            <aside class="host-panel">
+              <div class="host-label"><span></span>主持人观察</div>
+              <h2>如果现在开会，建议只讨论 3 件事</h2>
+              <ol id="meeting-topics">
+                <li><span>1</span><div><strong>用户端这批在途改动如何拆分提交？</strong><p>范围较大，功能、文档、预览稿混在同一工作区。</p></div></li>
+                <li><span>2</span><div><strong>角色菜单修复是否已完成双端验收？</strong><p>管理端今天已提交，用户端仍有入口行为在途。</p></div></li>
+                <li><span>3</span><div><strong>4 个产品口径由谁在何时拍板？</strong><p>它们已进入 P0，会影响后续收口与真实数据验收。</p></div></li>
+              </ol>
+              <button class="host-action" type="button" data-go-view="meeting">
+                查看会议议程
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+              </button>
+              <p class="host-note">依据 HANDOFF、TODO、Git 与最近测试记录生成；不改变任何项目状态。</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view-panel" data-panel="active">
+          <div class="page-intro"><p>8 项工作有实现或工作区证据，其中 3 项需要优先收口。</p><span id="active-total">按项目观察</span></div>
+          <div class="work-columns">
+            <section class="work-column">
+              <header><div><span class="project-code">U</span><p><strong>用户端</strong><small>7 项在途</small></p></div><b class="project-state is-risk">工作区较重</b></header>
+              <article class="work-item is-priority"><p class="eyebrow">P0 · EXPERIENCE</p><h3>登录后首屏与菜单响应优化</h3><p>日期组件减重、图表延迟加载、导航反馈与分片恢复。</p><footer><span>23 项定向测试</span><b>尚未提交</b></footer></article>
+              <article class="work-item"><p class="eyebrow">P0 · FEEDBACK</p><h3>异步操作等待反馈</h3><p>导出、排序、录单、复核和品牌对比补齐局部 loading。</p><footer><span>43 项定向测试</span><b>尚未提交</b></footer></article>
+              <article class="work-item"><p class="eyebrow">P0 · RESILIENCE</p><h3>默认错误页与统一错误恢复</h3><p>系统级故障进入错误页，业务失败保留原上下文。</p><footer><span>21 项定向测试</span><b>待收口</b></footer></article>
+              <article class="work-item"><p class="eyebrow">P1 · LIST</p><h3>结算单列表排序与录单时间</h3><p>服务端排序在分页前执行，手机端同步展示录单时间。</p><footer><span>前后端联动</span><b>待提交</b></footer></article>
+            </section>
+            <section class="work-column">
+              <header><div><span class="project-code">A</span><p><strong>管理端</strong><small>1 项待联调</small></p></div><b class="project-state is-stable">主干同步</b></header>
+              <article class="work-item is-complete"><p class="eyebrow">DONE · AUTH</p><h3>业务角色默认菜单授权</h3><p>管理端代码今天已提交，需要观察用户端角色默认入口表现。</p><footer><span>ce7582e</span><b>已提交</b></footer></article>
+              <div class="quiet-state"><span>观察结论</span><h3>管理端当前没有大规模在途开发</h3><p>主要关注与用户端的菜单、权限和字段规则契约是否一致。</p></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view-panel" data-panel="backlog">
+          <div class="page-intro"><p>来自两个项目文档的待办快照；管理系统不提供拖动或编辑。</p><span id="backlog-total">14 项待办</span></div>
+          <div class="kanban-grid">
+            <section class="kanban-column"><header><p><span class="dot critical"></span>P0 必须完成</p><b>4</b></header><article><small>产品确认</small><h3>入口页落点确认</h3><p>无录单权限角色的默认去向仍需拍板。</p></article><article><small>产品确认</small><h3>市场字典命名</h3><p>“海吉星2”疑似验收残留命名。</p></article><article><small>AI 生产化</small><h3>顺仔频控与审计</h3><p>补齐问题、工具、耗时与结果留档策略。</p></article></section>
+            <section class="kanban-column"><header><p><span class="dot active"></span>P1 当前阶段</p><b>7</b></header><article><small>用户体验</small><h3>果农版第二层简化</h3><p>首页转向大数字、等级卡片与大白话提醒。</p></article><article><small>导入</small><h3>到达日期别名确认</h3><p>等待客户 Excel 实际表头样本。</p></article><article><small>验收</small><h3>真实业绩数据回归</h3><p>当前示例数据不足以覆盖全部字段组合。</p></article></section>
+            <section class="kanban-column"><header><p><span class="dot future"></span>P2 后续优化</p><b>3</b></header><article><small>数据维度</small><h3>销售地区分析</h3><p>字段已预留，等待源数据提供地区。</p></article><article><small>第二期</small><h3>利润测算</h3><p>依赖采购成本与物流费用口径确认。</p></article><article><small>工程质量</small><h3>测试覆盖与 bisect 策略</h3><p>为中间态提交补充可追踪验证方式。</p></article></section>
+          </div>
+        </section>
+
+        <section class="view-panel" data-panel="completed">
+          <div class="page-intro"><p>按提交、交接记录和验证证据汇总，而不是手工勾选“完成”。</p><span id="completed-total">最近 14 天</span></div>
+          <div class="completed-todos" id="completed-todos"></div>
+          <div class="timeline" id="commit-timeline">
+            <article><time>09 / 24</time><span></span><div><p class="eyebrow">管理端 · AUTH</p><h3>调整业务角色默认菜单授权</h3><p>提交 <code>ce7582e</code>，等待用户端联合复核。</p></div></article>
+            <article><time>09 / 23</time><span></span><div><p class="eyebrow">用户端 · EXPERIENCE</p><h3>首屏性能、错误恢复和异步反馈完成验证</h3><p>形成多组定向测试记录，代码仍在工作区等待收口。</p></div></article>
+            <article><time>09 / 21</time><span></span><div><p class="eyebrow">双端 · UI</p><h3>图表与表单体验升级</h3><p>用户端引入 ECharts 与局部 Element Plus；管理端同步优化筛选标签。</p></div></article>
+            <article><time>09 / 18</time><span></span><div><p class="eyebrow">平台 · DELIVERY</p><h3>导入、录单、权限与运维能力阶段收口</h3><p>两个项目分别形成阶段性提交，文档同步更新。</p></div></article>
+          </div>
+        </section>
+
+        <section class="view-panel" data-panel="decisions">
+          <div class="page-intro"><p>决策只做索引和影响提示，历史内容仍以源项目 ADR 为准。</p><div class="segmented" role="group" aria-label="决策筛选"><button class="is-active" type="button" data-decision-filter="all">全部</button><button type="button" data-decision-filter="active">生效中</button><button type="button" data-decision-filter="impact">影响双端</button></div></div>
+          <div class="decision-list" id="decision-list">
+            <article data-decision="impact"><span>ADR-040</span><div><p class="eyebrow">ACCEPTED · 用户端</p><h3>系统级故障进入默认错误页，业务失败保留原页面</h3><p>影响 API 错误分类、路由恢复与部署侧静态兜底。</p></div><b>09/23</b></article>
+            <article data-decision="impact"><span>ADR-036</span><div><p class="eyebrow">ACCEPTED · 双端</p><h3>业务端侧边导航由管理端菜单驱动</h3><p>管理端维护名称、图标与启用状态；用户端保留槽位顺序。</p></div><b>09/20</b></article>
+            <article data-decision="active"><span>ADR-030</span><div><p class="eyebrow">ACCEPTED · 导入</p><h3>多文件导入采用预览草稿、二次确认、一次入库</h3><p>确认前不写正式事实，修改统一进入审计留痕。</p></div><b>09/17</b></article>
+            <article data-decision="impact"><span>ADR-029</span><div><p class="eyebrow">ACCEPTED · 双端</p><h3>统计等级由管理端字段转换规则生成</h3><p>用户端保留原始等级，转换规则不再写死在业务代码。</p></div><b>09/17</b></article>
+            <article data-decision="active"><span>ADR-023</span><div><p class="eyebrow">ACCEPTED · AI</p><h3>自然语言问答采用 Text-to-API</h3><p>模型不写 SQL、不重算指标，数字来自既有分析服务。</p></div><b>09/15</b></article>
+          </div>
+        </section>
+
+        <section class="view-panel" data-panel="quality">
+          <div class="page-intro"><p>展示“最后一次被记录的证据”，不把过期结果伪装成实时状态。</p><span>来源：HANDOFF / Git</span></div>
+          <div class="quality-hero">
+            <div><p class="eyebrow">LATEST RECORDED BASELINE</p><h2 id="quality-title">用户端最近一次全量前端验证为全绿</h2><p id="quality-summary">测试、类型检查与构建均有记录；当前工作区之后仍有新增改动，需要重新验证才能作为发布依据。</p></div>
+            <strong id="quality-count">263<small>/263</small></strong>
+          </div>
+          <div class="quality-grid">
+            <article><span class="quality-mark pass">PASS</span><h3>前端测试</h3><strong>263 项</strong><p>最近记录：2026-09-23</p></article>
+            <article><span class="quality-mark pass">PASS</span><h3>TypeScript</h3><strong>0 错误</strong><p>最近记录：2026-09-23</p></article>
+            <article><span class="quality-mark warn">WARN</span><h3>生产构建</h3><strong>2 条提示</strong><p>资源占位符与大分片提醒</p></article>
+            <article><span class="quality-mark stale">STALE</span><h3>当前工作区</h3><strong>需重验</strong><p>验证后仍有文件变化</p></article>
+          </div>
+          <section class="quality-rule"><div><p class="eyebrow">OBSERVATION RULE</p><h2>没有新证据，就不宣称完成</h2></div><p>观察台区分“代码存在”“测试记录存在”“当前版本已验证”“已经提交”四个状态，避免把历史全绿误解成当前可发布。</p></section>
+        </section>
+
+        <section class="view-panel" data-panel="meeting">
+          <div class="meeting-header">
+            <div><p class="eyebrow">READ-ONLY REVIEW · 25 MIN</p><h2>双项目进展观察会</h2><p>主持人只陈述证据、提出问题和记录观察，不替两个项目修改任务。</p></div>
+            <div class="meeting-date"><span>SEP</span><strong>24</strong><small>周四 · 10:00</small></div>
+          </div>
+          <div class="meeting-layout">
+            <section class="agenda-panel">
+              <header><h3>建议议程</h3><span>共 25 分钟</span></header>
+              <ol class="agenda-list" id="meeting-agenda">
+                <li><time>03'</time><div><small>CHECK-IN</small><h3>两端状态是否发生变化</h3><p>确认分支、最近提交与工作区状态。</p></div></li>
+                <li><time>08'</time><div><small>FOCUS</small><h3>用户端在途改动如何安全收口</h3><p>先明确提交边界，再决定最终回归范围。</p></div></li>
+                <li><time>06'</time><div><small>DEPENDENCY</small><h3>菜单授权修复的双端验收</h3><p>确认管理端授权与用户端默认入口一致。</p></div></li>
+                <li><time>05'</time><div><small>DECISION</small><h3>4 项产品口径排定确认人和时间</h3><p>这里只记录待确认，不替代源项目决定。</p></div></li>
+                <li><time>03'</time><div><small>CLOSE</small><h3>复述观察结论与下一次检查点</h3><p>会后输出只读会议快照。</p></div></li>
+              </ol>
+            </section>
+            <aside class="meeting-notes">
+              <p class="eyebrow">HOST SCRIPT</p>
+              <h3>开场建议</h3>
+              <blockquote>“今天不汇报所有工作，只核对证据发生变化的部分。先看用户端收口风险，再看双端菜单联动，最后明确待确认口径。”</blockquote>
+              <h3>会前材料</h3>
+              <ul id="meeting-materials"><li>两个仓库 Git 状态</li><li>用户端 HANDOFF / TODO</li><li>最近测试与构建记录</li><li>双端最近 8 条提交</li></ul>
+              <div class="meeting-output"><span>会议输出</span><p>纪要快照 · 观察结论 · 待确认事项</p><small>仅保存在项目管理系统自身</small></div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="document-dialog" id="document-dialog" aria-labelledby="document-title">
+      <header><h2 id="document-title">源项目文档</h2><button type="button" id="close-document" aria-label="关闭文档">关闭</button></header>
+      <pre id="document-content"></pre>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite">观察快照已刷新</div>
+    <script src="./app.js"></script>
+  </body>
+</html>
