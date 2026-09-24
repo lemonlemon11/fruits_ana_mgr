@@ -107,6 +107,8 @@ def test_manager_ui_keeps_git_evidence_separate_from_active_tasks():
     renderers = client.get("/fruits-ana-mgr/renderers.js")
 
     assert "Git 改动单列观察" in page.text
+    assert "7 项在途" not in page.text
+    assert "登录后首屏性能优化" not in page.text
     assert "changed_files.slice(0, 4).map" not in script.text
     assert "HANDOFF 明确未完成复选任务" in script.text
     assert "project.handoff.in_progress_items.slice(0, 4)" in core.text
