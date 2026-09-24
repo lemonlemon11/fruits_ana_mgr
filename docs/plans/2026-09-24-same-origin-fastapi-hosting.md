@@ -64,6 +64,6 @@
 - Create/modify: Git metadata for `https://github.com/lemonlemon11/fruits_ana_mgr.git`
 
 - [x] 忽略 Python 缓存、pytest 缓存、运行日志和本地截图。
-- [ ] 初始化管理端仓库，配置 `origin` 为用户提供的 Git 地址。
+- [x] 初始化管理端仓库，配置 `origin` 为用户提供的 Git 地址。
 - [x] 运行后端测试、启动 Uvicorn，并验证静态页、未登录拦截、登录快照、文档白名单和源仓库状态。
-- [ ] 创建符合项目规则的 checkpoint 提交并推送到远程；若远程已有不可覆盖历史，停止并报告，不强推。
+- [x] 创建符合项目规则的 checkpoint 提交；使用机器已有的 GitHub SSH 身份推送，保留 HTTPS 拉取地址。

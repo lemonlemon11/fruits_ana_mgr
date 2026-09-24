@@ -10,6 +10,7 @@ Fruits ANA Manager 是一个只读的项目进度观察台，用于查看 `fruit
 
 ```bash
 cd /home/python/workspace/fruits_ana_mgr
+python -m pip install -r requirements.txt
 python -m uvicorn backend.server:app --host 0.0.0.0 --port 53011
 ```
 
