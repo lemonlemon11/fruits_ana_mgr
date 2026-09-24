@@ -15,18 +15,29 @@
     <a class="skip-link" href="#main-content">跳到主要内容</a>
 
     <section class="auth-gate" id="auth-gate" aria-labelledby="login-title" hidden>
+      <div class="auth-intro">
+        <div class="auth-brand"><span class="brand-mark">FM</span><span>FRUITS MONITOR</span></div>
+        <p class="eyebrow">READ-ONLY PROJECT INTELLIGENCE</p>
+        <h1>先确认来源，<br /><em>再判断进度。</em></h1>
+        <p class="auth-lede">一个面向项目经理的只读观察台。登录后汇总两个源仓库的 Git、交接、待办、决策和测试证据。</p>
+        <div class="auth-source-preview" aria-label="读取范围">
+          <div><span class="source-icon">U</span><p><strong>fruits_ana</strong><small>用户端 · Git + 文档</small></p><b>01</b></div>
+          <div><span class="source-icon is-light">A</span><p><strong>fruits_ana_admin</strong><small>管理端 · Git + 文档</small></p><b>02</b></div>
+        </div>
+        <p class="auth-footnote">观察台不会写入源项目，也不会替代源项目的任务管理。</p>
+      </div>
       <form class="auth-card" id="login-form">
-        <span class="read-only-chip">READ ONLY · PROJECT MANAGER</span>
-        <p class="eyebrow">FRUITS ANA / INTERNAL</p>
-        <h1 id="login-title">项目观察台</h1>
-        <p>登录后读取两个项目的 Git 与项目文档。观察台不会修改源项目。</p>
+        <div class="auth-card-heading"><span class="read-only-chip">SESSION / PRIVATE</span><span>12 小时会话</span></div>
+        <p class="eyebrow">PROJECT MANAGER ACCESS</p>
+        <h2 id="login-title">登录项目观察台</h2>
+        <p class="auth-card-copy">使用项目经理账号查看最新只读快照。</p>
         <label for="login-username">账号</label>
         <input id="login-username" name="username" autocomplete="username" value="admin" required />
         <label for="login-password">密码</label>
         <input id="login-password" name="password" type="password" autocomplete="current-password" required />
-        <button class="refresh-button auth-submit" type="submit"><span>登录并读取</span></button>
-        <p class="auth-hint" id="login-message" role="alert"></p>
-        <small>演示默认账号：admin / 12345678。部署时请通过环境变量更换。</small>
+        <button class="refresh-button auth-submit" type="submit"><span>登录并读取</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" /></svg></button>
+        <p class="auth-hint" id="login-message" role="alert" aria-live="polite"></p>
+        <small>默认账号：admin / 12345678。部署时可通过环境变量更换。</small>
       </form>
     </section>
 
@@ -237,7 +248,7 @@
         </section>
 
         <section class="view-panel" data-panel="active">
-          <div class="page-intro"><p>8 项工作有实现或工作区证据，其中 3 项需要优先收口。</p><span id="active-total">按项目观察</span></div>
+          <div class="page-intro"><p>只展示 HANDOFF 明确标记的进行中任务，Git 改动单列观察。</p><span id="active-total">按项目观察</span></div>
           <div class="work-columns">
             <section class="work-column">
               <header><div><span class="project-code">U</span><p><strong>用户端</strong><small>7 项在途</small></p></div><b class="project-state is-risk">工作区较重</b></header>
@@ -329,11 +340,20 @@
       </main>
     </div>
 
+    <dialog class="detail-dialog" id="detail-dialog" aria-labelledby="detail-title">
+      <div class="detail-shell">
+        <header><div><p class="eyebrow">DETAIL / SOURCE TRACE</p><h2 id="detail-title">数据详情</h2></div><button type="button" class="dialog-close" id="close-detail" aria-label="关闭详情">关闭</button></header>
+        <div class="detail-body" id="detail-content"></div>
+      </div>
+    </dialog>
     <dialog class="document-dialog" id="document-dialog" aria-labelledby="document-title">
       <header><h2 id="document-title">源项目文档</h2><button type="button" id="close-document" aria-label="关闭文档">关闭</button></header>
       <pre id="document-content"></pre>
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite">观察快照已刷新</div>
+    <script src="./core.js"></script>
+    <script src="./details.js"></script>
+    <script src="./renderers.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

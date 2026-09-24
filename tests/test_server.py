@@ -13,17 +13,22 @@ def _write_doc(repo, relative_path: str, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
-def test_handoff_parser_preserves_list_items_and_all_test_entries(tmp_path):
+def test_handoff_parser_only_counts_explicit_open_tasks(tmp_path):
     _write_doc(
         tmp_path,
         "docs/HANDOFF.md",
-        "## In Progress\n- [ ] 第一项\n- [ ] 第二项\n## Test Status\n"
+        "## In Progress\n"
+        "- 实现说明，不是任务\n"
+        "- [x] 已经完成\n"
+        "- [ ] 第一项\n"
+        "- [ ] 第二项\n"
+        "## Test Status\n"
         + "".join(f"### Test {number}\n结果 {number}\n" for number in range(1, 12)),
     )
 
     result = server._parse_handoff(tmp_path)
 
-    assert result["in_progress_items"] == ["[ ] 第一项", "[ ] 第二项"]
+    assert result["in_progress_items"] == ["第一项", "第二项"]
     assert len(result["test_entries"]) == 11
     assert result["test_entries"][-1]["title"] == "Test 11"
 
@@ -91,6 +96,24 @@ def test_fastapi_serves_manager_ui_and_assets_from_same_origin():
     assert "--ink" in styles.text
     assert script.status_code == 200
     assert "fetch(`/api${path}`" in script.text
+
+
+def test_manager_ui_keeps_git_evidence_separate_from_active_tasks():
+    client = TestClient(server.app)
+
+    page = client.get("/fruits-ana-mgr/")
+    script = client.get("/fruits-ana-mgr/app.js")
+    core = client.get("/fruits-ana-mgr/core.js")
+    renderers = client.get("/fruits-ana-mgr/renderers.js")
+
+    assert "Git 改动单列观察" in page.text
+    assert "changed_files.slice(0, 4).map" not in script.text
+    assert "HANDOFF 明确未完成复选任务" in script.text
+    assert "project.handoff.in_progress_items.slice(0, 4)" in core.text
+    assert "项明确进行中" in renderers.text
+    assert "个 Git 观察项" in renderers.text
+    assert "HANDOFF 来源缺失，无法判断" in renderers.text
+    assert "Git 工作区 / 最近提交" not in renderers.text
 
 
 def test_root_redirects_to_manager_ui():
