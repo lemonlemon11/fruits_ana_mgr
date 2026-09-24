@@ -1,4 +1,4 @@
-window.ManagerApp = window.ManagerApp || {}
+window.ManagerApp = window.ManagerApp || {};
 
 (() => {
   const M = window.ManagerApp
